@@ -1,6 +1,7 @@
 package ru.yandex.practicum.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -11,6 +12,7 @@ import ru.yandex.practicum.mappers.sensors.SensorMapper;
 import ru.yandex.practicum.model.hub.*;
 import ru.yandex.practicum.model.sensor.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
@@ -24,7 +26,7 @@ public class EventServiceImpl implements EventService {
     private String hubTopic;
 
     @Override
-    public void addSensorEvent(SensorEvent sensorEvent) {
+    public SensorEvent addSensorEvent(SensorEvent sensorEvent) {
         switch (sensorEvent.getType()) {
             case LIGHT_SENSOR_EVENT -> kafkaProducer
                     .send(new ProducerRecord<>(sensorTopic,
@@ -42,10 +44,13 @@ public class EventServiceImpl implements EventService {
                     new ProducerRecord<>(sensorTopic,
                             SensorMapper.mapToTemperatureSensorAvro(((TemperatureSensorEvent) sensorEvent))));
         }
+
+        log.info("Send message with body = {} to topic {}", sensorEvent, sensorTopic);
+        return sensorEvent;
     }
 
     @Override
-    public void addHubEvent(HubEvent hubEvent) {
+    public HubEvent addHubEvent(HubEvent hubEvent) {
         switch (hubEvent.getType()) {
             case DEVICE_ADDED -> kafkaProducer.send(
                     new ProducerRecord<>(sensorTopic,
@@ -60,5 +65,9 @@ public class EventServiceImpl implements EventService {
                     new ProducerRecord<>(sensorTopic,
                             HubMapper.mapToScenarioRemovedEventAvro((ScenarioRemovedEvent) hubEvent)));
         }
+
+        log.info("Send message with body = {} to topic {}", hubEvent, hubTopic);
+
+        return hubEvent;
     }
 }
