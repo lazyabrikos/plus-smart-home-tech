@@ -21,14 +21,19 @@ public class EventController {
 
     @PostMapping("/sensors")
     public SensorEvent collectSensorEvent(@Valid @RequestBody SensorEvent sensorEvent) {
-        log.info("Got POST request /events/sensor with body = {}", sensorEvent);
+        log.info("Got sensor event with id = {}", sensorEvent.getId());
+        log.debug("Event = {}", sensorEvent);
         SensorEvent response =  eventService.addSensorEvent(sensorEvent);
-        log.info("Send response with body = {}", response);
+        log.info("Send response with id = {}", response.getId());
         return response;
     }
 
     @PostMapping("/hubs")
-    public void collectHubEvent(@Valid @RequestBody HubEvent hubEvent) {
-        eventService.addHubEvent(hubEvent);
+    public HubEvent collectHubEvent(@Valid @RequestBody HubEvent hubEvent) {
+        log.info("Got hub event with hub id = {}", hubEvent.getHubId());
+        log.debug("Event = {}", hubEvent);
+        HubEvent response = eventService.addHubEvent(hubEvent);
+        log.info("Send response with hub id = {}", hubEvent.getHubId());
+        return response;
     }
 }

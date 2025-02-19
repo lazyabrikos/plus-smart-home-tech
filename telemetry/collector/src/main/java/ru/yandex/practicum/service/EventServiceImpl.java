@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.mappers.hub.HubMapper;
-import ru.yandex.practicum.mappers.sensors.SensorMapper;
-import ru.yandex.practicum.model.hub.*;
-import ru.yandex.practicum.model.sensor.*;
+import ru.yandex.practicum.model.hub.HubEvent;
+import ru.yandex.practicum.model.sensor.SensorEvent;
 
 @Slf4j
 @Service
@@ -27,47 +24,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public SensorEvent addSensorEvent(SensorEvent sensorEvent) {
-        switch (sensorEvent.getType()) {
-            case LIGHT_SENSOR_EVENT -> kafkaProducer
-                    .send(new ProducerRecord<>(sensorTopic,
-                            SensorMapper.mapToLightSensorAvro((LightSensorEvent) sensorEvent)));
-            case MOTION_SENSOR_EVENT -> kafkaProducer.send(
-                    new ProducerRecord<>(sensorTopic,
-                            SensorMapper.mapToMotionSensorAvro(((MotionSensorEvent) sensorEvent))));
-            case CLIMATE_SENSOR_EVENT -> kafkaProducer.send(
-                    new ProducerRecord<>(sensorTopic,
-                            SensorMapper.mapToClimateSensorAvro(((ClimateSensorEvent) sensorEvent))));
-            case SWITCH_SENSOR_EVENT -> kafkaProducer.send(
-                    new ProducerRecord<>(sensorTopic,
-                            SensorMapper.mapToSwitchSensorAvro(((SwitchSensorEvent) sensorEvent))));
-            case TEMPERATURE_SENSOR_EVENT -> kafkaProducer.send(
-                    new ProducerRecord<>(sensorTopic,
-                            SensorMapper.mapToTemperatureSensorAvro(((TemperatureSensorEvent) sensorEvent))));
-        }
-
-        log.info("Send message with body = {} to topic {}", sensorEvent, sensorTopic);
+        sensorEvent.getType().addSensorEvent(sensorEvent, sensorTopic, kafkaProducer);
         return sensorEvent;
     }
 
     @Override
     public HubEvent addHubEvent(HubEvent hubEvent) {
-        switch (hubEvent.getType()) {
-            case DEVICE_ADDED -> kafkaProducer.send(
-                    new ProducerRecord<>(sensorTopic,
-                            HubMapper.mapToDeviceAddedEventAvro((DeviceAddedEvent) hubEvent)));
-            case DEVICE_REMOVED -> kafkaProducer.send(
-                    new ProducerRecord<>(sensorTopic,
-                            HubMapper.mapToDeviceRemovedEventAvro((DeviceRemovedEvent) hubEvent)));
-            case SCENARIO_ADDED -> kafkaProducer.send(
-                    new ProducerRecord<>(sensorTopic,
-                            HubMapper.mapToScenarioAddedEventAvro((ScenarioAddedEvent) hubEvent)));
-            case SCENARIO_REMOVED -> kafkaProducer.send(
-                    new ProducerRecord<>(sensorTopic,
-                            HubMapper.mapToScenarioRemovedEventAvro((ScenarioRemovedEvent) hubEvent)));
-        }
-
-        log.info("Send message with body = {} to topic {}", hubEvent, hubTopic);
-
+        hubEvent.getType().addHubEvent(hubEvent, hubTopic, kafkaProducer);
         return hubEvent;
     }
 }
