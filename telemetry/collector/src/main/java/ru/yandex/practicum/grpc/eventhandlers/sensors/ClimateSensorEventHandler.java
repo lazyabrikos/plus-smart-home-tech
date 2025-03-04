@@ -1,4 +1,4 @@
-package ru.yandex.practicum.grpc.eventhandlers;
+package ru.yandex.practicum.grpc.eventhandlers.sensors;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.avro.specific.SpecificRecordBase;

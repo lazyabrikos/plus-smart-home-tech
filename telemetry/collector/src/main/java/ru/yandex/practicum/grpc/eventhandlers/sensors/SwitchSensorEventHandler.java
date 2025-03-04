@@ -1,4 +1,4 @@
-package ru.yandex.practicum.grpc.eventhandlers;
+package ru.yandex.practicum.grpc.eventhandlers.sensors;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.TemperatureSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SwitchSensorAvro;
 
 import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
-public class TemperatureSensorEventHandler implements SensorEventHandler {
+public class SwitchSensorEventHandler implements SensorEventHandler {
 
     private final KafkaProducer<String, SpecificRecordBase> kafkaProducer;
 
@@ -23,21 +23,20 @@ public class TemperatureSensorEventHandler implements SensorEventHandler {
 
     @Override
     public SensorEventProto.PayloadCase getMessageType() {
-        return SensorEventProto.PayloadCase.TEMPERATURE_SENSOR_EVENT;
+        return SensorEventProto.PayloadCase.SWITCH_SENSOR_EVENT;
     }
 
     @Override
     public void handle(SensorEventProto event) {
-        SensorEventAvro temperatureSensorAvro = SensorEventAvro.newBuilder()
+        SensorEventAvro switchSensorAvro = SensorEventAvro.newBuilder()
                 .setId(event.getId())
                 .setHubId(event.getHubId())
                 .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
                         event.getTimestamp().getNanos()))
-                .setPayload(TemperatureSensorAvro.newBuilder()
-                        .setTemperatureC(event.getTemperatureSensorEvent().getTemperatureC())
-                        .setTemperatureF(event.getTemperatureSensorEvent().getTemperatureF())
+                .setPayload(SwitchSensorAvro.newBuilder()
+                        .setState(event.getSwitchSensorEvent().getState())
                         .build())
                 .build();
-        kafkaProducer.send(new ProducerRecord<>(sensorTopic, temperatureSensorAvro));
+        kafkaProducer.send(new ProducerRecord<>(sensorTopic, switchSensorAvro));
     }
 }

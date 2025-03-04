@@ -1,6 +1,5 @@
-package ru.yandex.practicum.grpc.eventhandlers;
+package ru.yandex.practicum.grpc.eventhandlers.sensors;
 
-import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 
 public interface SensorEventHandler {
