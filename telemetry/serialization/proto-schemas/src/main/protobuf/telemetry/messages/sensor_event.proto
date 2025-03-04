@@ -7,6 +7,19 @@ option java_package = "ru.yandex.practicum.grpc.telemetry.event";
 
 import "google/protobuf/timestamp.proto";
 
+message SensorEventProto {
+  string  id = 1;
+  string hub_id = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  oneof payload {
+    MotionSensorEventProto motion_sensor_event = 4;
+    TemperatureSensorEventProto temperature_sensor_event = 5;
+    LightSensorEventProto light_sensor_event = 6;
+    ClimateSensorEventProto climate_sensor_event = 7;
+    SwitchSensorEventProto switch_sensor_event = 8;
+  }
+}
+
 message MotionSensorEventProto {
   int32 link_quality = 1;
   bool motion = 2;
@@ -31,17 +44,4 @@ message ClimateSensorEventProto {
 
 message SwitchSensorEventProto {
   bool state = 1;
-}
-
-message SensorEventProto {
-  string  id = 1;
-  string hub_id = 2;
-  google.protobuf.Timestamp timestamp = 3;
-  oneof payload {
-    MotionSensorEventProto motion_sensor_event = 4;
-    TemperatureSensorEventProto temperature_sensor_event = 5;
-    LightSensorEventProto light_sensor_event = 6;
-    ClimateSensorEventProto climate_sensor_event = 7;
-    SwitchSensorEventProto switch_sensor_event = 8;
-  }
 }

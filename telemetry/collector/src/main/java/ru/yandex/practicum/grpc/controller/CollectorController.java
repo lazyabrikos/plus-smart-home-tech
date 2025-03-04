@@ -45,6 +45,4 @@ public class CollectorController extends CollectorControllerGrpc.CollectorContro
             ));
         }
     }
-
-
 }

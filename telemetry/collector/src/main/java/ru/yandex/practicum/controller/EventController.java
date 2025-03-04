@@ -15,7 +15,7 @@ import ru.yandex.practicum.service.EventService;
 @RestController
 @RequestMapping("/events")
 @AllArgsConstructor
-public class CollectorController {
+public class EventController {
 
     private final EventService eventService;
 
