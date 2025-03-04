@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import ru.yandex.practicum.grpc.eventhandlers.SensorEventHandler;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 
 import java.util.Map;
@@ -48,5 +49,10 @@ public class CollectorController extends CollectorControllerGrpc.CollectorContro
                             .withCause(e)
             ));
         }
+    }
+
+    @Override
+    public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
+        super.collectHubEvent(request, responseObserver);
     }
 }
