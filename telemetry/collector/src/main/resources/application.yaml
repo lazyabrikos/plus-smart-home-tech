@@ -6,4 +6,4 @@ key_serializer_class: "org.apache.kafka.common.serialization.VoidSerializer"
 value_serializer_class: "ru.yandex.practicum.serializer.EventAvroSerializer"
 grpc:
   server:
-    port: 9090
+    port: 59091
