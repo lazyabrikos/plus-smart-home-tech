@@ -4,6 +4,7 @@ import com.google.protobuf.Empty;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import ru.yandex.practicum.grpc.eventhandlers.SensorEventHandler;
 import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @GrpcService
 public class CollectorController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
@@ -29,7 +31,9 @@ public class CollectorController extends CollectorControllerGrpc.CollectorContro
 
     @Override
     public void collectSensorEvent(SensorEventProto request, StreamObserver<Empty> responseObserver) {
+        log.debug("sensors {}", sensorEventHandlers);
         try {
+            log.debug("request {}", request.getPayloadCase());
             if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
                 sensorEventHandlers.get(request.getPayloadCase()).handle(request);
             } else {
