@@ -7,7 +7,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
+import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.TemperatureSensorAvro;
+
+import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
@@ -25,9 +28,15 @@ public class TemperatureSensorEventHandler implements SensorEventHandler {
 
     @Override
     public void handle(SensorEventProto event) {
-        TemperatureSensorAvro temperatureSensorAvro = TemperatureSensorAvro.newBuilder()
-                .setTemperatureC(event.getTemperatureSensorEvent().getTemperatureC())
-                .setTemperatureF(event.getTemperatureSensorEvent().getTemperatureF())
+        SensorEventAvro temperatureSensorAvro = SensorEventAvro.newBuilder()
+                .setId(event.getId())
+                .setHubId(event.getHubId())
+                .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
+                        event.getTimestamp().getNanos()))
+                .setPayload(TemperatureSensorAvro.newBuilder()
+                        .setTemperatureC(event.getTemperatureSensorEvent().getTemperatureC())
+                        .setTemperatureF(event.getTemperatureSensorEvent().getTemperatureF())
+                        .build())
                 .build();
         kafkaProducer.send(new ProducerRecord<>(sensorTopic, temperatureSensorAvro));
     }

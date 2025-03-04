@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.LightSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
+
+import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
@@ -26,9 +29,15 @@ public class LightSensorEventHandler implements SensorEventHandler {
 
     @Override
     public void handle(SensorEventProto event) {
-        LightSensorAvro lightSensorAvro = LightSensorAvro.newBuilder()
-                .setLinkQuality(event.getLightSensorEvent().getLinkQuality())
-                .setLuminosity(event.getLightSensorEvent().getLuminosity())
+        SensorEventAvro lightSensorAvro = SensorEventAvro.newBuilder()
+                .setId(event.getId())
+                .setHubId(event.getHubId())
+                .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
+                        event.getTimestamp().getNanos()))
+                .setPayload(LightSensorAvro.newBuilder()
+                        .setLinkQuality(event.getLightSensorEvent().getLinkQuality())
+                        .setLuminosity(event.getLightSensorEvent().getLuminosity())
+                        .build())
                 .build();
         kafkaProducer.send(new ProducerRecord<>(sensorTopic, lightSensorAvro));
     }

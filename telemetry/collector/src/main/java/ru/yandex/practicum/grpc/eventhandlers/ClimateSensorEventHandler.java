@@ -8,8 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
-import ru.yandex.practicum.mappers.sensors.SensorMapper;
-import ru.yandex.practicum.model.sensor.ClimateSensorEvent;
+import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
+
+import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
@@ -27,10 +28,16 @@ public class ClimateSensorEventHandler implements SensorEventHandler {
 
     @Override
     public void handle(SensorEventProto event) {
-        ClimateSensorAvro climateSensorAvro = ClimateSensorAvro.newBuilder()
-                .setHumidity(event.getClimateSensorEvent().getHumidity())
-                .setCo2Level(event.getClimateSensorEvent().getCo2Level())
-                .setTemperatureC(event.getClimateSensorEvent().getTemperatureC())
+        SensorEventAvro climateSensorAvro = SensorEventAvro.newBuilder()
+                .setId(event.getId())
+                .setHubId(event.getHubId())
+                .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
+                        event.getTimestamp().getNanos()))
+                .setPayload(ClimateSensorAvro.newBuilder()
+                        .setHumidity(event.getClimateSensorEvent().getHumidity())
+                        .setCo2Level(event.getClimateSensorEvent().getCo2Level())
+                        .setTemperatureC(event.getClimateSensorEvent().getTemperatureC())
+                        .build())
                 .build();
         kafkaProducer.send(new ProducerRecord<>(sensorTopic, climateSensorAvro));
     }

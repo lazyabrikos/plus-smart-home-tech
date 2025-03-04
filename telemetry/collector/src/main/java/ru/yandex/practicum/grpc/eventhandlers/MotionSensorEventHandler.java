@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
+
+import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
@@ -26,10 +29,16 @@ public class MotionSensorEventHandler implements SensorEventHandler {
 
     @Override
     public void handle(SensorEventProto event) {
-        MotionSensorAvro motionSensorAvro = MotionSensorAvro.newBuilder()
-                .setLinkQuality(event.getMotionSensorEvent().getLinkQuality())
-                .setMotion(event.getMotionSensorEvent().getMotion())
-                .setVoltage(event.getMotionSensorEvent().getVoltage())
+        SensorEventAvro motionSensorAvro = SensorEventAvro.newBuilder()
+                .setId(event.getId())
+                .setHubId(event.getHubId())
+                .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
+                        event.getTimestamp().getNanos()))
+                .setPayload(MotionSensorAvro.newBuilder()
+                        .setLinkQuality(event.getMotionSensorEvent().getLinkQuality())
+                        .setMotion(event.getMotionSensorEvent().getMotion())
+                        .setVoltage(event.getMotionSensorEvent().getVoltage())
+                        .build())
                 .build();
         kafkaProducer.send(new ProducerRecord<>(sensorTopic, motionSensorAvro));
     }
