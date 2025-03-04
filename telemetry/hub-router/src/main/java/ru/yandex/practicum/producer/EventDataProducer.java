@@ -207,7 +207,7 @@ public class EventDataProducer {
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
                 ).setMotionSensorEvent(
-                        MotionSensorEventProto.newBuilder()
+                        MotionSensorProto.newBuilder()
                                 .setMotion(sensor.isMotion())
                                 .setLinkQuality(sensor.getLinkQuality())
                                 .setVoltage(sensor.getVoltage())
@@ -226,7 +226,7 @@ public class EventDataProducer {
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
                 ).setClimateSensorEvent(
-                        ClimateSensorEventProto.newBuilder()
+                        ClimateSensorProto.newBuilder()
                                 .setCo2Level(sensor.getCo2Level())
                                 .setHumidity(sensor.getHumidity())
                                 .setTemperatureC(sensor.getTemperature())
@@ -245,7 +245,7 @@ public class EventDataProducer {
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
                 ).setLightSensorEvent(
-                        LightSensorEventProto.newBuilder()
+                        LightSensorProto.newBuilder()
                                 .setLinkQuality(sensor.getLinkQuality())
                                 .setLuminosity(sensor.getLuminosity())
                                 .build()
@@ -263,7 +263,7 @@ public class EventDataProducer {
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
                 ).setSwitchSensorEvent(
-                        SwitchSensorEventProto.newBuilder()
+                        SwitchSensorProto.newBuilder()
                                 .setState(sensor.isState())
                                 .build()
                 )
@@ -282,7 +282,7 @@ public class EventDataProducer {
                         .setSeconds(ts.getEpochSecond())
                         .setNanos(ts.getNano())
                 ).setTemperatureSensorEvent(
-                        TemperatureSensorEventProto.newBuilder()
+                        TemperatureSensorProto.newBuilder()
                                 .setTemperatureC(temperatureCelsius)
                                 .setTemperatureF(temperatureFahrenheit)
                                 .build()
