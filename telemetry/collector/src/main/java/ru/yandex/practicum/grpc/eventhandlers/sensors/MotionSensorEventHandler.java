@@ -1,6 +1,7 @@
 package ru.yandex.practicum.grpc.eventhandlers.sensors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 import java.time.Instant;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MotionSensorEventHandler implements SensorEventHandler {
@@ -29,6 +31,7 @@ public class MotionSensorEventHandler implements SensorEventHandler {
 
     @Override
     public void handle(SensorEventProto event) {
+        log.info("Got event {} for handling", event);
         SensorEventAvro motionSensorAvro = SensorEventAvro.newBuilder()
                 .setId(event.getId())
                 .setHubId(event.getHubId())
@@ -40,6 +43,11 @@ public class MotionSensorEventHandler implements SensorEventHandler {
                         .setVoltage(event.getMotionSensorEvent().getVoltage())
                         .build())
                 .build();
-        kafkaProducer.send(new ProducerRecord<>(sensorTopic, motionSensorAvro));
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(sensorTopic, null,
+                motionSensorAvro.getTimestamp().toEpochMilli(), motionSensorAvro.getHubId(),
+                motionSensorAvro);
+        kafkaProducer.send(record);
+        log.info("Send to topic {} motion event {}", sensorTopic, motionSensorAvro);
+
     }
 }

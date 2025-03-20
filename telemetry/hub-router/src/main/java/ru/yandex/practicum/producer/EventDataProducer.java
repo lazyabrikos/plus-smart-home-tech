@@ -227,9 +227,9 @@ public class EventDataProducer {
                         .setNanos(ts.getNano())
                 ).setClimateSensorEvent(
                         ClimateSensorProto.newBuilder()
-                                .setCo2Level(sensor.getCo2Level())
-                                .setHumidity(sensor.getHumidity())
                                 .setTemperatureC(sensor.getTemperature())
+                                .setHumidity(sensor.getHumidity())
+                                .setCo2Level(sensor.getCo2Level())
                                 .build()
                 )
                 .build();

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.grpc.eventhandlers.sensors;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.kafka.telemetry.event.TemperatureSensorAvro;
 
 import java.time.Instant;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TemperatureSensorEventHandler implements SensorEventHandler {
@@ -28,6 +30,7 @@ public class TemperatureSensorEventHandler implements SensorEventHandler {
 
     @Override
     public void handle(SensorEventProto event) {
+        log.info("Got event {} for handling", event);
         SensorEventAvro temperatureSensorAvro = SensorEventAvro.newBuilder()
                 .setId(event.getId())
                 .setHubId(event.getHubId())
@@ -38,6 +41,10 @@ public class TemperatureSensorEventHandler implements SensorEventHandler {
                         .setTemperatureF(event.getTemperatureSensorEvent().getTemperatureF())
                         .build())
                 .build();
-        kafkaProducer.send(new ProducerRecord<>(sensorTopic, temperatureSensorAvro));
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(sensorTopic, null,
+                temperatureSensorAvro.getTimestamp().toEpochMilli(), temperatureSensorAvro.getHubId(),
+                temperatureSensorAvro);
+        kafkaProducer.send(record);
+        log.info("Send to topic {} temperature event {}", sensorTopic, temperatureSensorAvro);
     }
 }
