@@ -39,6 +39,7 @@ public class CollectorController extends CollectorControllerGrpc.CollectorContro
 
     @Override
     public void collectSensorEvent(SensorEventProto request, StreamObserver<Empty> responseObserver) {
+        log.info("Got sensor event request {}", request);
         try {
             if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
                 sensorEventHandlers.get(request.getPayloadCase()).handle(request);
@@ -58,6 +59,7 @@ public class CollectorController extends CollectorControllerGrpc.CollectorContro
 
     @Override
     public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
+        log.info("Got sensor hub request {}", request);
         try {
             if (hubEventHandlers.containsKey(request.getPayloadCase())) {
                 hubEventHandlers.get(request.getPayloadCase()).handle(request);
