@@ -24,7 +24,7 @@ public class SensorEventHandler {
             return updatedSnapshot;
         } else {
             SensorsSnapshotAvro snapshotAvro = createSnapshot(eventAvro);
-            snapshots.put(eventAvro.getId(), snapshotAvro);
+            snapshots.put(hubId, snapshotAvro);
 
             return Optional.of(snapshotAvro);
         }
