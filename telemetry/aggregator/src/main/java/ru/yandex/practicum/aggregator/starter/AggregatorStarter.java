@@ -39,6 +39,8 @@ public class AggregatorStarter {
 
     public void start() {
         try {
+            log.info("Sensor topic = {}", sensorTopic);
+            log.info("Snapshot topic = {}", snapshotTopic);
             kafkaConsumer.subscribe(List.of(sensorTopic));
 
             Runtime.getRuntime().addShutdownHook(new Thread(kafkaConsumer::wakeup));
