@@ -72,5 +72,6 @@ public class CollectorController extends CollectorControllerGrpc.CollectorContro
                             .withDescription(e.getLocalizedMessage())
                             .withCause(e)
             ));
-        }    }
+        }
+    }
 }
