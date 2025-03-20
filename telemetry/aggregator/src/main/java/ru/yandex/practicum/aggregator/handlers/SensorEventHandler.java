@@ -35,7 +35,7 @@ public class SensorEventHandler {
 
         if (snapshot.getSensorsState().containsKey(sensorId)) {
             if (snapshot.getSensorsState().get(sensorId).getTimestamp().isAfter(event.getTimestamp()) ||
-            snapshot.getSensorsState().get(sensorId).getData().equals(event.getPayload())) {
+                    snapshot.getSensorsState().get(sensorId).getData().equals(event.getPayload())) {
                 return Optional.empty();
             }
         }

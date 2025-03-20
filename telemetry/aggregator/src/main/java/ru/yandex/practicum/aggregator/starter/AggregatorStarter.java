@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +73,8 @@ public class AggregatorStarter {
 
                 // здесь нужно вызвать метод продюсера для сброса данных в буффере
                 // здесь нужно вызвать метод консьюмера для фиксиции смещений
-                kafkaProducer.flush();;
+                kafkaProducer.flush();
+                ;
                 kafkaConsumer.commitSync();
             } finally {
                 log.info("Закрываем консьюмер");
