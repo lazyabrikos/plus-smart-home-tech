@@ -37,9 +37,9 @@ public class ClimateSensorEventHandler implements SensorEventHandler {
                 .setTimestamp(Instant.ofEpochSecond(event.getTimestamp().getSeconds(),
                         event.getTimestamp().getNanos()))
                 .setPayload(ClimateSensorAvro.newBuilder()
+                        .setTemperatureC(event.getClimateSensorEvent().getTemperatureC())
                         .setHumidity(event.getClimateSensorEvent().getHumidity())
                         .setCo2Level(event.getClimateSensorEvent().getCo2Level())
-                        .setTemperatureC(event.getClimateSensorEvent().getTemperatureC())
                         .build())
                 .build();
         ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(sensorTopic, null,
