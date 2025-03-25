@@ -76,7 +76,6 @@ public class AggregatorStarter {
                 // здесь нужно вызвать метод продюсера для сброса данных в буффере
                 // здесь нужно вызвать метод консьюмера для фиксиции смещений
                 kafkaProducer.flush();
-                ;
                 kafkaConsumer.commitSync();
             } finally {
                 log.info("Закрываем консьюмер");
