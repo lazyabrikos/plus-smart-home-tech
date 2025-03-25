@@ -33,7 +33,7 @@ public class KafkaConsumerConfig {
     private String snapshotDeserializer;
 
     @Value("${spring.kafka.consumer.enable-auto-commit}")
-    private boolean autoCommit;
+    private String autoCommit;
 
     @Value("{spring.kafka.consumer.snapshots-client-id}")
     private String snapshotClientId;
