@@ -1,6 +1,7 @@
 package ru.yandex.practicum.client;
 
 import com.google.protobuf.Timestamp;
+import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.grpc.telemetry.event.ActionTypeProto;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.model.Action;
 
 import java.time.Instant;
 
+@Slf4j
 @Service
 public class HubRouterClient {
 
@@ -33,6 +35,8 @@ public class HubRouterClient {
                 .setTimestamp(timestamp())
                 .build();
         hubRouterClient.handleDeviceAction(deviceActionRequest);
+        log.info("Action {} was send to hub-router", deviceActionRequest);
+
     }
 
     private ActionTypeProto actionTypeProto(ActionTypeAvro actionType) {

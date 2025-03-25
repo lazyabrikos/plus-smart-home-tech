@@ -32,9 +32,9 @@ public class SnapshotProcessor {
 
             while (true) {
                 ConsumerRecords<String, SensorsSnapshotAvro> records = kafkaConsumer.poll(Duration.ofMillis(1000));
-
                 for (ConsumerRecord<String, SensorsSnapshotAvro> record : records) {
                     SensorsSnapshotAvro snapshot = record.value();
+                    log.info("Got snapshot for handling {}", snapshot);
                     snapshotHandler.handleSnapshot(snapshot);
                 }
                 kafkaConsumer.commitSync();
