@@ -24,7 +24,7 @@ public class Action {
     private Integer value;
 
     @ManyToOne
-    @JoinColumn(name = "scenatio_id", table = "scenario_actions")
+    @JoinColumn(name = "scenario_id", table = "scenario_actions")
     private Scenario scenario;
 
     @ManyToOne

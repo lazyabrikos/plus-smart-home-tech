@@ -1,9 +1,11 @@
 package ru.yandex.practicum.handlers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.client.HubRouterClient;
 import ru.yandex.practicum.kafka.telemetry.event.*;
+import ru.yandex.practicum.model.Action;
 import ru.yandex.practicum.model.Condition;
 import ru.yandex.practicum.model.Scenario;
 import ru.yandex.practicum.repository.ActionRepository;
@@ -13,6 +15,7 @@ import ru.yandex.practicum.repository.ScenarioRepository;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SnapshotHandler {
@@ -25,10 +28,12 @@ public class SnapshotHandler {
     public void handleSnapshot(SensorsSnapshotAvro snapshot) {
         Map<String, SensorStateAvro> states = snapshot.getSensorsState();
         List<Scenario> scenarios = scenarioRepository.findByHubId(snapshot.getHubId());
+        log.info("Scenarios {}", scenarios);
         scenarios.stream()
                 .filter(scenario -> handleScenario(scenario, states))
-                .forEach(scenario ->
-                        sendScenarioActions(scenario)
+                .forEach(scenario -> {
+                            sendScenarioActions(scenario);
+                        }
                 );
     }
 
@@ -88,7 +93,7 @@ public class SnapshotHandler {
 
         switch (conditionOperation) {
             case EQUALS -> {
-                return targetValue.equals(curValue);
+                return targetValue == curValue;
             }
             case LOWER_THAN -> {
                 return curValue < targetValue;
@@ -104,6 +109,7 @@ public class SnapshotHandler {
 
     private void sendScenarioActions(Scenario scenario) {
         actionRepository.findAllByScenario(scenario).forEach(hubRouterClient::sendActionRequest);
+        log.info("Sended reqeust");
     }
 
 }

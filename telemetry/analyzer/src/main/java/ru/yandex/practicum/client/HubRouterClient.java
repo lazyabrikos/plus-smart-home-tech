@@ -25,6 +25,7 @@ public class HubRouterClient {
     }
 
     public void sendActionRequest(Action action) {
+        log.info("Sending request");
         DeviceActionRequest deviceActionRequest = DeviceActionRequest.newBuilder()
                 .setHubId(action.getScenario().getHubId())
                 .setScenarioName(action.getScenario().getName())

@@ -24,7 +24,7 @@ public class HubEventProcessor implements Runnable {
     private final KafkaConsumer<String, HubEventAvro> kafkaConsumer;
     private final HubHandler hubHandler;
 
-    @Value("{topics.hub-event-topic}")
+    @Value("${topics.hub-event-topic}")
     private String topic;
 
     @Override
