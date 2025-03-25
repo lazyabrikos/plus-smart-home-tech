@@ -23,11 +23,14 @@ public class KafkaConsumerConfig {
     @Value("{spring.kafka.bootstrap-servers}")
     private String boostrapServers;
 
-    @Value("{spring.kafka.consumer.key-deserializer}")
+    @Value("${spring.kafka.consumer.key-deserializer}")
     private String keyDeserializer;
 
-    @Value("{spring.kafka.consumer.value-deserializer}")
+    @Value("${spring.kafka.consumer.value-deserializer}")
     private String valueDeserializer;
+
+    @Value("${spring.kafka.consumer.snapshots-deserializer}")
+    private String snapshotDeserializer;
 
     @Value("${spring.kafka.consumer.enable-auto-commit}")
     private boolean autoCommit;
@@ -37,9 +40,6 @@ public class KafkaConsumerConfig {
 
     @Value("{spring.kafka.consumer.snapshots-group-id}")
     private String snapshotGroupId;
-
-    @Value("{spring.kafka.consumer.snapshots-deserializer}")
-    private String snapshotDeserializer;
 
     @Bean
     public KafkaConsumer<String, HubEventAvro> getHubEventProperties() {
