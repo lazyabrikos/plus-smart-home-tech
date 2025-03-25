@@ -2,22 +2,17 @@ package ru.yandex.practicum.processors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.handlers.SnapshotHandler;
-import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -26,7 +21,7 @@ public class SnapshotProcessor {
     private final KafkaConsumer<String, SensorsSnapshotAvro> kafkaConsumer;
     private final SnapshotHandler snapshotHandler;
 
-    @Value("${topics.snapshot-topic}")
+    @Value("${topics.snapshots-topic}")
     private String snapshotTopic;
 
     public void start() {
