@@ -1,9 +1,0 @@
-topics:
-  sensors: "telemetry.sensors.v1"
-  hubs: "telemetry.hubs.v1"
-boostrap_servers: "localhost:9092"
-key_serializer_class: "org.apache.kafka.common.serialization.StringSerializer"
-value_serializer_class: "ru.yandex.practicum.serializer.EventAvroSerializer"
-grpc:
-  server:
-    port: 59091
