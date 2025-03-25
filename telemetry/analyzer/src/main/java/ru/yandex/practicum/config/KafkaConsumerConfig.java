@@ -29,8 +29,8 @@ public class KafkaConsumerConfig {
     @Value("{spring.kafka.consumer.value-deserializer}")
     private String valueDeserializer;
 
-    @Value("{spring.kafka.consumer.enable-auto-commit}")
-    private String autoCommit;
+    @Value("${spring.kafka.consumer.enable-auto-commit}")
+    private boolean autoCommit;
 
     @Value("{spring.kafka.consumer.snapshots-client-id}")
     private String snapshotClientId;
