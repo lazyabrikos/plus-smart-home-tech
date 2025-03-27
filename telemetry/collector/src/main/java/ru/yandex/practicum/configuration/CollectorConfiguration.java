@@ -1,5 +1,6 @@
 package ru.yandex.practicum.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -12,16 +13,18 @@ import java.util.Properties;
 
 @Configuration
 @ConfigurationProperties
+@RequiredArgsConstructor
 public class CollectorConfiguration {
 
-    @Value("${boostrap_servers}")
+    @Value("${spring.kafka.producer.bootstrap-servers}")
     private String boostrapServer;
 
-    @Value("${key_serializer_class}")
+    @Value("${spring.kafka.producer.key-serializer}")
     private String keySerializerClass;
 
-    @Value("${value_serializer_class}")
+    @Value("${spring.kafka.producer.value-serializer}")
     private String valueSerializerClass;
+
 
     @Bean
     KafkaProducer<String, SpecificRecordBase> kafkaProducer() {

@@ -2,12 +2,12 @@ package ru.yandex.practicum;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.shell.command.annotation.CommandScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@CommandScan(basePackages = "ru.yandex.practicum")
-public class Collector {
+@EnableScheduling
+public class HubRouterApp {
     public static void main(String[] args) {
-        SpringApplication.run(Collector.class, args);
+        SpringApplication.run(HubRouterApp.class, args);
     }
 }
