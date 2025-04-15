@@ -7,7 +7,11 @@ spring:
     config:
       server:
         native:
-          searchLocations: classpath:config/telemetry/{application}
+          searchLocations:
+            - classpath:config/telemetry/{application}
+            - classpath:config/commerce/{application}
+
+
 server:
   port: 8888
 eureka:
