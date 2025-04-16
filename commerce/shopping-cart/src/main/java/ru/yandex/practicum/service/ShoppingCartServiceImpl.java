@@ -2,6 +2,7 @@ package ru.yandex.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.clients.WarehouseClient;
 import ru.yandex.practicum.dto.BookedProductsDto;
 import ru.yandex.practicum.dto.ShoppingCartDto;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     private final ShoppingCartRepository repository;
@@ -32,6 +34,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto addProductToShoppingCart(String username, Map<UUID, Integer> products) {
         checkUsername(username);
         ShoppingCart shoppingCart = repository.findByUsername(username);
@@ -47,6 +50,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public void deactivateCurrentShoppingCart(String username) {
         checkUsername(username);
         ShoppingCart shoppingCart = repository.findByUsername(username);
@@ -55,28 +59,29 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto removeFromShoppingCart(String username, List<UUID> products) {
         checkUsername(username);
         ShoppingCart shoppingCart = repository.findByUsername(username);
         checkCartIsActive(shoppingCart);
         Map<UUID, Integer> oldProducts = shoppingCart.getProducts();
         for (UUID id : products) {
-            if (oldProducts.containsKey(id)) {
-                oldProducts.remove(id);
-            } else {
-                throw new NoProductsInShoppingCartException("No product in car with id " + id.toString());
-            }
+            oldProducts.remove(id);
         }
         shoppingCart.setProducts(oldProducts);
         return mapper.toCartDto(repository.save(shoppingCart));
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto changeProductQuantity(String username, ChangeProductQuantityRequest requestDto) {
         checkUsername(username);
         ShoppingCart shoppingCart = repository.findByUsername(username);
         checkCartIsActive(shoppingCart);
         Map<UUID, Integer> oldProducts = shoppingCart.getProducts();
+        if (oldProducts.isEmpty()) {
+            throw new NoProductsInShoppingCartException("Cart is empty");
+        }
         if (oldProducts.containsKey(requestDto.getProductId())) {
             oldProducts.put(requestDto.getProductId(), requestDto.getNewQuantity());
         } else {

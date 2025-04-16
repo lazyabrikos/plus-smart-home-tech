@@ -2,6 +2,7 @@ package ru.yandex.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.practicum.clients.ShoppingStoreClient;
 import ru.yandex.practicum.dto.AddressDto;
 import ru.yandex.practicum.dto.BookedProductsDto;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class WarehouseServiceImpl implements WarehouseService {
 
     private final WarehouseRepository repository;
@@ -36,6 +38,7 @@ public class WarehouseServiceImpl implements WarehouseService {
 
 
     @Override
+    @Transactional
     public void newProductInWarehouse(NewProductInWarehouseRequest request) {
         repository.findById(request.getProductId()).ifPresent(
                 product -> {
@@ -80,6 +83,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    @Transactional
     public void addProductToWarehouse(AddProductToWarehouseRequest request) {
         WarehouseProduct product = repository.findById(request.getProductId())
                 .orElseThrow(() -> new NoSpecifiedProductInWarehouseException("Такого товара нет в перечне товаров на складе:" + request.getProductId()));

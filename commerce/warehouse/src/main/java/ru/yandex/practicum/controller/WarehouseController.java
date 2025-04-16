@@ -1,7 +1,9 @@
 package ru.yandex.practicum.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.clients.WarehouseClient;
@@ -20,17 +22,17 @@ public class WarehouseController implements WarehouseClient {
     private final WarehouseService warehouseService;
 
     @Override
-    public void newProductInWarehouse(NewProductInWarehouseRequest request) {
+    public void newProductInWarehouse(@RequestBody @Valid NewProductInWarehouseRequest request) {
         warehouseService.newProductInWarehouse(request);
     }
 
     @Override
-    public BookedProductsDto checkProductQuantityEnoughForShoppingCart(ShoppingCartDto cartDto) {
+    public BookedProductsDto checkProductQuantityEnoughForShoppingCart(@RequestBody @Valid ShoppingCartDto cartDto) {
         return warehouseService.checkProductQuantityEnoughForShoppingCart(cartDto);
     }
 
     @Override
-    public void addProductToWarehouse(AddProductToWarehouseRequest request) {
+    public void addProductToWarehouse(@RequestBody @Valid AddProductToWarehouseRequest request) {
         warehouseService.addProductToWarehouse(request);
     }
 
