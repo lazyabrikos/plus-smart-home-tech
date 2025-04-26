@@ -11,8 +11,13 @@ import ru.yandex.practicum.dto.AddressDto;
 import ru.yandex.practicum.dto.BookedProductsDto;
 import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.requests.AddProductToWarehouseRequest;
+import ru.yandex.practicum.requests.AssemblyProductsForOrderRequest;
 import ru.yandex.practicum.requests.NewProductInWarehouseRequest;
+import ru.yandex.practicum.requests.ShippedToDeliveryRequest;
 import ru.yandex.practicum.service.WarehouseService;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -39,5 +44,20 @@ public class WarehouseController implements WarehouseClient {
     @Override
     public AddressDto getWarehouseAddress() {
         return warehouseService.getWarehouseAddress();
+    }
+
+    @Override
+    public void shippedToDelivery(ShippedToDeliveryRequest deliveryRequest) {
+
+    }
+
+    @Override
+    public BookedProductsDto assemblyProductsForOrder(AssemblyProductsForOrderRequest assemblyProductsForOrder) {
+        return null;
+    }
+
+    @Override
+    public void acceptReturn(Map<UUID, Long> products) {
+
     }
 }
