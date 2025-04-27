@@ -14,6 +14,7 @@ import ru.yandex.practicum.model.Delivery;
 import ru.yandex.practicum.repository.DeliveryRepository;
 import ru.yandex.practicum.requests.ShippedToDeliveryRequest;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -24,7 +25,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final OrderClient orderClient;
     private final WarehouseClient warehouseClient;
 
-    private static final double BASERATE = 5.0;
+    private static final BigDecimal BASERATE = new BigDecimal(5.0);
     private static final String ADDRESS1 = "ADDRESS_1";
     private static final String ADDRESS2 = "ADDRESS_2";
 
@@ -64,24 +65,29 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public Double deliveryCost(OrderDto orderDto) {
+    public BigDecimal deliveryCost(OrderDto orderDto) {
         Delivery delivery = deliveryRepository.findByOrderId(orderDto.getOrderId()).orElseThrow(
                 () -> new NoDeliveryFoundException("Delivery not found"));
 
         AddressDto warehouseAddress = warehouseClient.getWarehouseAddress();
 
-        double addressCost = switch (warehouseAddress.getCity()) {
-            case ADDRESS1 -> BASERATE * 1;
-            case ADDRESS2 -> BASERATE * 2;
+        BigDecimal addressCost = switch (warehouseAddress.getCity()) {
+            case ADDRESS1 -> BASERATE.multiply(BigDecimal.valueOf(1));
+            case ADDRESS2 -> BASERATE.multiply(BigDecimal.valueOf(2));
             default -> throw new IllegalStateException(String.format("Unexpected value: %s",
                     warehouseAddress.getCity()));
         };
-        double deliveryCost = BASERATE + addressCost;
-        if (orderDto.getFragile()) deliveryCost += deliveryCost * 0.2;
-        deliveryCost += orderDto.getDeliveryWeight() * 0.3;
-        deliveryCost += orderDto.getDeliveryVolume() * 0.2;
+        BigDecimal deliveryCost = BASERATE.add(addressCost);
+        if (orderDto.getFragile()) deliveryCost = deliveryCost.add(deliveryCost.multiply(BigDecimal.valueOf(0.2)));
+        deliveryCost = deliveryCost.add(
+                BigDecimal.valueOf(orderDto.getDeliveryWeight()).multiply(BigDecimal.valueOf(0.3))
+        );
+
+        deliveryCost = deliveryCost.add(
+                BigDecimal.valueOf(orderDto.getDeliveryVolume()).multiply(BigDecimal.valueOf(0.2))
+        );
         if (!warehouseAddress.getStreet().equals(delivery.getToAddress().getStreet())) {
-            deliveryCost += deliveryCost * 0.2;
+            deliveryCost = deliveryCost.add(deliveryCost.multiply(BigDecimal.valueOf(0.2)));
         }
         return deliveryCost;
     }

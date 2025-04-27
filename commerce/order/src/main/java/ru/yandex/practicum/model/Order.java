@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.yandex.practicum.enums.OrderState;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,9 +40,9 @@ public class Order {
     private Double deliveryVolume;
     private Boolean fragile;
     @Column(name = "total_price")
-    private Double totalPrice;
+    private BigDecimal totalPrice;
     @Column(name = "delivery_price")
-    private Double deliveryPrice;
+    private BigDecimal deliveryPrice;
     @Column(name = "product_price")
-    private Double productPrice;
+    private BigDecimal productPrice;
 }

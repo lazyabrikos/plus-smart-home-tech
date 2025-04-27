@@ -16,16 +16,16 @@ import java.util.UUID;
 public class Delivery {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    UUID deliveryId;
+    private UUID deliveryId;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "from_address", joinColumns = @JoinColumn(name = "delivery_id"),
             inverseJoinColumns = @JoinColumn(name = "address_id"))
-    Address fromAddress;
+    private Address fromAddress;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "to_address", joinColumns = @JoinColumn(name = "delivery_id"),
             inverseJoinColumns = @JoinColumn(name = "address_id"))
-    Address toAddress;
-    UUID orderId;
+    private Address toAddress;
+    private UUID orderId;
     @Enumerated(EnumType.STRING)
-    DeliveryState deliveryState;
+    private DeliveryState deliveryState;
 }

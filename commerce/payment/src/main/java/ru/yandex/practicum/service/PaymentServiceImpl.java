@@ -14,6 +14,7 @@ import ru.yandex.practicum.mapper.PaymentMapper;
 import ru.yandex.practicum.model.Payment;
 import ru.yandex.practicum.repository.PaymentRepository;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,9 +29,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public PaymentDto payment(OrderDto orderDto) {
-        Double deliveryPrice = orderDto.getDeliveryPrice();
-        Double productPrice = orderDto.getProductPrice();
-        Double totalPrice = orderDto.getTotalPrice();
+        BigDecimal deliveryPrice = orderDto.getDeliveryPrice();
+        BigDecimal productPrice = orderDto.getProductPrice();
+        BigDecimal totalPrice = orderDto.getTotalPrice();
         if (deliveryPrice == null || productPrice == null || totalPrice == null) {
             throw new NotEnoughInfoInOrderToCalculateException("Not enough information to create payment");
         }
@@ -39,32 +40,33 @@ public class PaymentServiceImpl implements PaymentService {
                 .totalPayment(orderDto.getTotalPrice())
                 .productTotal(orderDto.getProductPrice())
                 .deliveryTotal(orderDto.getDeliveryPrice())
-                .feeTotal(orderDto.getTotalPrice() * 0.1)
+                .feeTotal(orderDto.getTotalPrice().multiply(BigDecimal.valueOf(0.1)))
                 .paymentState(PaymentState.PENDING)
                 .build();
         return paymentMapper.toPaymentDto(paymentRepository.save(payment));
     }
 
     @Override
-    public Double productCost(OrderDto orderDto) {
-        double productCost = 0.0;
+    public BigDecimal productCost(OrderDto orderDto) {
+        BigDecimal productCost = new BigDecimal(0.0);
         Map<UUID, Long> products = orderDto.getProducts();
         if (products == null) {
             throw new NotEnoughInfoInOrderToCalculateException("Not enough info to calculate productCost");
         }
         for (Map.Entry<UUID, Long> entry : products.entrySet()) {
             ProductDto product = shoppingStoreClient.getProduct(entry.getKey());
-            productCost += product.getPrice().doubleValue() * entry.getValue();
+            productCost = productCost.add(product.getPrice().multiply(BigDecimal.valueOf(entry.getValue())));
         }
         return productCost;
     }
 
     @Override
-    public Double getTotalCost(OrderDto orderDto) {
+    public BigDecimal getTotalCost(OrderDto orderDto) {
         if (orderDto.getDeliveryPrice() == null) {
             throw new NotEnoughInfoInOrderToCalculateException("Not enough info");
         }
-        return orderDto.getProductPrice() + orderDto.getProductPrice() * 0.1 + orderDto.getDeliveryPrice();
+        return orderDto.getProductPrice().add(orderDto.getProductPrice().multiply(BigDecimal.valueOf(0.1)))
+                .add(orderDto.getDeliveryPrice());
     }
 
     @Override

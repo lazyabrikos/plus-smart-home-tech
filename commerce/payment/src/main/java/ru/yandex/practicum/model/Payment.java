@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import ru.yandex.practicum.enums.PaymentState;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -19,13 +20,13 @@ public class Payment {
     @Column(name = "payment_id")
     private UUID paymentId;
     @Column(name = "total_payment")
-    private Double totalPayment;
+    private BigDecimal totalPayment;
     @Column(name = "delivery_total")
-    private Double deliveryTotal;
+    private BigDecimal deliveryTotal;
     @Column(name = "fee_total")
-    private Double feeTotal;
+    private BigDecimal feeTotal;
     @Column(name = "product_total")
-    private Double productTotal;
+    private BigDecimal productTotal;
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_state")
     private PaymentState paymentState = PaymentState.PENDING;

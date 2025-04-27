@@ -15,13 +15,13 @@ import java.util.UUID;
 @AllArgsConstructor
 public class DeliveryDto {
     @NotNull
-    UUID deliveryId;
+    private UUID deliveryId;
     @NotNull
-    AddressDto fromAddress;
+    private AddressDto fromAddress;
     @NotNull
-    AddressDto toAddress;
+    private AddressDto toAddress;
     @NotNull
-    UUID orderId;
+    private UUID orderId;
     @NotNull
-    DeliveryState deliveryState;
+    private DeliveryState deliveryState;
 }

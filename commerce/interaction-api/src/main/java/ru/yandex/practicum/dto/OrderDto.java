@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.yandex.practicum.enums.OrderState;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.UUID;
 
@@ -16,17 +17,17 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderDto {
     @NotNull
-    UUID orderId;
-    UUID shoppingCartId;
+    private UUID orderId;
+    private UUID shoppingCartId;
     @NotNull
-    Map<UUID, Long> products;
-    UUID paymentId;
-    UUID deliveryId;
-    OrderState state;
-    Double deliveryWeight;
-    Double deliveryVolume;
-    Boolean fragile;
-    Double totalPrice;
-    Double deliveryPrice;
-    Double productPrice;
+    private Map<UUID, Long> products;
+    private UUID paymentId;
+    private UUID deliveryId;
+    private OrderState state;
+    private Double deliveryWeight;
+    private Double deliveryVolume;
+    private Boolean fragile;
+    private BigDecimal totalPrice;
+    private BigDecimal deliveryPrice;
+    private BigDecimal productPrice;
 }
