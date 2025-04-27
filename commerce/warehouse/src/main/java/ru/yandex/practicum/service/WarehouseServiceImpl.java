@@ -11,13 +11,15 @@ import ru.yandex.practicum.dto.ShoppingCartDto;
 import ru.yandex.practicum.enums.QuantityState;
 import ru.yandex.practicum.exception.NoSpecifiedProductInWarehouseException;
 import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouse;
+import ru.yandex.practicum.exception.ProductInShoppingCartLowQuantityInWarehouseException;
 import ru.yandex.practicum.exception.SpecifiedProductAlreadyInWarehouseException;
+import ru.yandex.practicum.mapper.BookingMapper;
 import ru.yandex.practicum.mapper.WarehouseMapper;
+import ru.yandex.practicum.model.Booking;
 import ru.yandex.practicum.model.WarehouseProduct;
+import ru.yandex.practicum.repository.BookingRepository;
 import ru.yandex.practicum.repository.WarehouseRepository;
-import ru.yandex.practicum.requests.AddProductToWarehouseRequest;
-import ru.yandex.practicum.requests.NewProductInWarehouseRequest;
-import ru.yandex.practicum.requests.SetProductQuantityStateRequest;
+import ru.yandex.practicum.requests.*;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -35,6 +37,8 @@ public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseRepository repository;
     private final WarehouseMapper mapper;
     private final ShoppingStoreClient shoppingStoreClient;
+    private final BookingRepository bookingRepository;
+    private final BookingMapper bookingMapper;
 
 
     @Override
@@ -119,5 +123,40 @@ public class WarehouseServiceImpl implements WarehouseService {
                 .country(address)
                 .flat(address)
                 .build();
+    }
+
+    @Override
+    public BookedProductsDto assemblyProductsForOrder(AssemblyProductsForOrderRequest assemblyProductsForOrder) {
+        Booking booking = bookingRepository.findById(assemblyProductsForOrder.getShoppingCartId()).orElseThrow(
+                () -> new RuntimeException(String.format("Shopping cart %s not found", assemblyProductsForOrder.getShoppingCartId()))
+        );
+
+        Map<UUID, Long> productsInBooking = booking.getProducts();
+        List<WarehouseProduct> productsInWarehouse = repository.findAllById(productsInBooking.keySet());
+        productsInWarehouse.forEach(warehouse -> {
+            if (warehouse.getQuantity() < productsInBooking.get(warehouse.getProductId())) {
+                throw new ProductInShoppingCartLowQuantityInWarehouseException("Not enough quantity of product");
+            }
+        });
+        for (WarehouseProduct warehouse : productsInWarehouse) {
+            warehouse.setQuantity((int) (warehouse.getQuantity() - productsInBooking.get(warehouse.getProductId())));
+        }
+        booking.setOrderId(assemblyProductsForOrder.getOrderId());
+        return bookingMapper.toBookedProductsDto(booking);
+    }
+
+    @Override
+    public void shippedToDelivery(ShippedToDeliveryRequest deliveryRequest) {
+        Booking booking = bookingRepository.findByOrderId(deliveryRequest.getOrderId()).orElseThrow(
+                () -> new NoSpecifiedProductInWarehouseException("Нет информации о товаре на складе."));
+        booking.setDeliveryId(deliveryRequest.getDeliveryId());
+    }
+
+    @Override
+    public void acceptReturn(Map<UUID, Long> products) {
+        List<WarehouseProduct> warehousesItems = repository.findAllById(products.keySet());
+        for (WarehouseProduct warehouse : warehousesItems) {
+            warehouse.setQuantity((int) (warehouse.getQuantity() + products.get(warehouse.getProductId())));
+        }
     }
 }

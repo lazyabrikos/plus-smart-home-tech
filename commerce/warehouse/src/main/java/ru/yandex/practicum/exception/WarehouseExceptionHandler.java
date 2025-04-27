@@ -31,7 +31,8 @@ public class WarehouseExceptionHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class,
             NoSpecifiedProductInWarehouseException.class,
             ProductInShoppingCartLowQuantityInWarehouse.class,
-            SpecifiedProductAlreadyInWarehouseException.class})
+            SpecifiedProductAlreadyInWarehouseException.class,
+            ProductInShoppingCartLowQuantityInWarehouseException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequestException(RuntimeException e) {
         log.error("400 {}", e.getMessage());
